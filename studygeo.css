@@ -3,22 +3,27 @@ body
   display:flex;
   flex-direction: column;
   background-color: bisque;
+  padding-top: 10vmax;
 }
 
-.header
+.header,.header-new
 {
+  position: fixed;
+  top: 2%;
+  left: 2%;
+  right: 2%;
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
-  margin-top: 1%;
   background-color: rgb(249, 208, 158);
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
   border-radius: 25%;
 }
 
-.right-icons,
-.left-icons
+.header-new
 {
+  background-color: rgba(0,0,0,0);
+  box-shadow: none;
 }
 
 .right-icons
@@ -38,7 +43,8 @@ body
 .icon
 {
   object-fit: contain;
-  width: clamp(50px, 50%, 50px);
+  width: clamp(20px, 50%, 50px);
+  max-height: 50px;
   padding: 5%;
   border-radius: 25%;
   background-color: rgb(254, 246, 237);
@@ -75,6 +81,7 @@ body
 .Logos
 {
   font-size: 8vmin;
+  max-height: fit-content;
   font-family: 'Inter','Arial';
   font-weight: bold;
   padding-left: 2%;
@@ -82,4 +89,63 @@ body
   border-radius: 10px;
   border: none;
   box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+}
+
+
+/* Body */
+
+.grid-wrapper
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.grid-games
+{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cell-r,
+.cell-l
+{
+  display: flex;
+  justify-content: start;
+  padding: 3%;
+  padding-top: 2%;
+}
+
+.cell-l
+{
+  justify-content: end;
+}
+
+.options
+{
+  font-size: 5vmin;
+  width: 50vmin;
+  height: 25vmin;
+  font-family: 'Inter','Arial';
+  font-weight: bold;
+  padding-left: 2%;
+  padding-right: 2%;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+  transition: background-color 0.15s,
+  opacity 0.15s,
+  box-shadow 0.15s;
+}
+
+.options:hover
+{
+  background-color: rgba(131, 131, 131, 0.367);
+}
+
+.options:active
+{
+  opacity: 0.8;
+  box-shadow: 0px 0px 0px rgba(0,0,0,0);
 }
