@@ -1,5 +1,10 @@
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Model~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//This array stores all the info from the web server request -> this provides us with data of all countries in the world.
 const arrayCountries = fetch('https://restcountries.com/v3.1/all').then(res => res.json()).then(res => {return res});
 
+
+//These are a bunch of HTML Elements that we need to modify
 const flagPic = document.getElementById("Flagid");
 const cardHead = document.getElementById("heading-name");
 const submitButton = document.getElementById("submit");
@@ -10,93 +15,138 @@ const answer = document.getElementById("answer");
 const outputBox = document.getElementById("output-box");
 const backHome = document.getElementById("back-home");
 
-let capital;
 
+//These represent the current Countries data values.
+let capital, flagUrl, countryName;
 
-let getRandomCountry = async() => {
+//A variable that allows me to switch 1 button between 'Next' and 'Submit' Options.
+let submitOrNext = 0; // 0 -> Submit, 1 -> Next
+
+// This function takes the 'arrayCountries' and returns a random 'country' object from it.
+const getRandomCountry = async() => {
   const a = await arrayCountries;
   const randNum = Math.floor(Math.random() * a.length);
   return a[randNum];
 }
 
-let updateCard = async() => {
+
+const updateCurrentCountry = async() => {
 
   const randCountry = await getRandomCountry();
 
-  const flagUrl = randCountry.flags.png;
-  const name = randCountry.name.common;
+  //Updates current country details.
+  flagUrl = randCountry.flags.png;
+  countryName = randCountry.name.common;
   capital = randCountry.capital;
 
-  capital.forEach(capitals => {
-  console.log(capitals);
-  });
-
-  console.log(name);
-  console.log(flagUrl);
-
-  cardHead.innerHTML = name;
-  flagPic.setAttribute("src",flagUrl);
+  //Updates the Visual Card (HTML/CSS) on screen.
+  updateCard();
 
 }
 
+const findCapital = (capital) => {
+  let found = false;
+
+  capital.forEach(capitals => {
+    if(textBox.value.toLowerCase() === capitals.toLowerCase())
+    {
+      found = true;
+    }
+  });
+
+  return found;
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~View~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// This function purely updates the card on screen.
+let updateCard = () => {
+  cardHead.innerHTML = countryName;
+  flagPic.setAttribute("src",flagUrl);
+}
+
+
+//Called when answer is correct. (User input)
 let correctDisplay = () => {
   result.innerHTML="Correct!";
   outputBox.style.backgroundColor = "rgba(67, 243, 67, 0.507)";
 }
 
+//Called when answer is wrong. (User input)
 let wrongDisplay = () => {
   result.innerHTML="Wrong!";
   outputBox.style.backgroundColor = "rgba(243, 82, 67, 0.507)";
 }
 
+//This concatenates the string for all capitals (In-case a country has more than 1 capital) and updates the webpage.
 let showCapitals = (capital) => {
-
   let x="";
 
   capital.forEach(capitals => {
-     x = x.concat(capitals,",");
+     x = x.concat(capitals,", ");
   })
 
-  x = x.slice(0, -1);
-
-  console.log(x);
-
+  x = x.slice(0, -2);
   answer.innerHTML = x;
-
 }
 
-submitButton.addEventListener("click", () => {
+const toggleSubmit = () => {
 
-console.log("clicked");
+  if(!submitOrNext)
+    submitButton.innerHTML = "Next";
+  else
+    submitButton.innerHTML = "Submit";
 
-let found = false;
-
-capital.forEach(capitals => {
-  if(textBox.value.toLowerCase() === capitals.toLowerCase())
-  {
-    correctDisplay();
-    console.log("correct!");
-    found = true;
-  }
-});
-
-if(!found)
-{
-wrongDisplay();
-console.log("wrong!");
+  submitOrNext = !submitOrNext;
 }
 
-showCapitals(capital);
+const refreshAnswer = () => {
 
-});
-
-nextButton.addEventListener("click", () => {
   textBox.value = "";
   textBox.focus();
   result.innerHTML = "";
   answer.innerHTML = "";
   outputBox.style.backgroundColor = "rgba(0,0,0,0)";
-  updateCard();
+
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Controller~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+submitButton.addEventListener("click", () => {
+
+  //If submit is clicked.
+  if(!submitOrNext)
+  {  
+    const found = findCapital(capital);
+
+    if(!found)
+      wrongDisplay();
+    else
+      correctDisplay();
+
+    showCapitals(capital);
+    
+    //Update display and toggle button
+    toggleSubmit();
+
+  }
+  else //If next is clicked.
+  {
+    refreshAnswer();
+    updateCurrentCountry();
+    toggleSubmit();
+  }
+
+
+});
+
+textBox.addEventListener("keypress", (event) => {
+
+  if(event.key === "Enter")
+    submitButton.click();
+
 })
 
 backHome.addEventListener("click", () => {
@@ -105,5 +155,4 @@ backHome.addEventListener("click", () => {
 
 
 
-
-updateCard();
+updateCurrentCountry();
