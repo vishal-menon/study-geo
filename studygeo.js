@@ -48,13 +48,29 @@ const findCapital = (capital) => {
   let found = false;
 
   capital.forEach(capitals => {
-    if(textBox.value.toLowerCase() === capitals.toLowerCase())
+    console.log(capitals.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
+    console.log(capitals.toLowerCase());
+    if(textBox.value.toLowerCase().normalize('NFD') === capitals.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
     {
+      
       found = true;
     }
   });
 
   return found;
+}
+
+const updateLocalStats = (found) => {
+
+  const capitalsGuessed = JSON.parse(localStorage.getItem("capitalsGuessed"));
+  localStorage.setItem("capitalsGuessed", JSON.stringify(capitalsGuessed+1));
+
+  if(found)
+  {
+    const capitalsWon = JSON.parse(localStorage.getItem("capitalsWon"));
+    localStorage.setItem("capitalsWon", JSON.stringify(capitalsWon+1));
+  }
+
 }
 
 
@@ -118,15 +134,20 @@ submitButton.addEventListener("click", () => {
 
   //If submit is clicked.
   if(!submitOrNext)
-  {  
+  { 
+    if(!(capital === undefined))
+    { 
     const found = findCapital(capital);
 
-    if(!found)
-      wrongDisplay();
-    else
+    if(found)
       correctDisplay();
+    else
+      wrongDisplay();
 
+    updateLocalStats(found);
+    
     showCapitals(capital);
+    }
     
     //Update display and toggle button
     toggleSubmit();
